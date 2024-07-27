@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class ProjectUpdateRequest extends FormRequest
+class BoardCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +23,12 @@ class ProjectUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'min:3', 'string'],
-            'description' => ['required', 'min:3', 'string'],
+            'title' => ['required', 'string', 'max:255'],
+            'project_id' => [
+                'required',
+                Rule::exists("projects", "id")
+                    ->where(fn ($query) => $query->where("user_id", $this->user()->id))
+            ]
         ];
     }
 }
